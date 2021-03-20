@@ -3,6 +3,15 @@ function loader (mcVersion) {
   const Window = require('./lib/Window')(Item)
   const mcData = require('minecraft-data')(mcVersion)
 
+  const specialWindows = {
+    'HorseInv-0': { type: 'HorseInv-0', inventory: { start: 2, end: 37 }, slots: 38, craft: -1, requireConfirmation: true },
+    'HorseInv-1': { type: 'HorseInv-1', inventory: { start: 5, end: 40 }, slots: 41, craft: -1, requireConfirmation: true },
+    'HorseInv-2': { type: 'HorseInv-2', inventory: { start: 8, end: 43 }, slots: 44, craft: -1, requireConfirmation: true },
+    'HorseInv-3': { type: 'HorseInv-3', inventory: { start: 11, end: 46 }, slots: 47, craft: -1, requireConfirmation: true },
+    'HorseInv-4': { type: 'HorseInv-4', inventory: { start: 14, end: 49 }, slots: 50, craft: -1, requireConfirmation: true },
+    'HorseInv-5': { type: 'HorseInv-5', inventory: { start: 17, end: 52 }, slots: 53, craft: -1, requireConfirmation: true }
+  }
+
   let windows
   if (mcData.isNewerOrEqualTo('1.14')) {
     // https://wiki.vg/Inventory
@@ -51,8 +60,7 @@ function loader (mcVersion) {
       'minecraft:anvil': { type: 'minecraft:anvil', inventory: { start: 3, end: 38 }, slots: 39, craft: 2, requireConfirmation: true },
       'minecraft:hopper': { type: 'minecraft:hopper', inventory: { start: 5, end: 40 }, slots: 41, craft: -1, requireConfirmation: true },
       'minecraft:dropper': { type: 'minecraft:dropper', inventory: { start: 7 * 9, end: 7 * 9 + 35 }, slots: 7 * 9 + 36, craft: -1, requireConfirmation: true },
-      'minecraft:shulker_box': { type: 'minecraft:shulker_box', inventory: { start: 27, end: 62 }, slots: 63, craft: -1, requireConfirmation: true },
-      EntityHorse: null
+      'minecraft:shulker_box': { type: 'minecraft:shulker_box', inventory: { start: 27, end: 62 }, slots: 63, craft: -1, requireConfirmation: true }
     }
   }
 
@@ -70,6 +78,10 @@ function loader (mcVersion) {
       let winData = windowByType.get(type)
       if (!winData) winData = windows[type]
       if (!winData) {
+        winData = specialWindows[type]
+        if (winData) winData.key = type
+      }
+      if (!winData) {
         if (slotCount === undefined) return null
         winData = {
           type,
@@ -84,6 +96,7 @@ function loader (mcVersion) {
       return new Window(id, winData.key, title, slotCount, winData.inventory, winData.craft, winData.requireConfirmation)
     },
     Window,
+    specialWindows,
     windows
   }
 }
